@@ -1,20 +1,32 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { deleteTask, toggleTaskState } from "../redux/taskSlice";
 
 const TaskRow = ({ task }) => {
-  return (
-    <li style={styles.row}>
-      <h3>{task.title}</h3>
-      <p>{task.description}</p>
-      <p>Priority: {task.priority}</p>
-    </li>
-  );
-};
+  const dispatch = useDispatch();
 
-const styles = {
-  row: {
-    padding: "10px",
-    borderBottom: "1px solid #ccc",
-  },
+  const handleToggle = () => {
+    dispatch(toggleTaskState(task.id));
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteTask(task.id));
+  };
+
+  return (
+    <div className="task-row">
+      <div>
+        <input
+          type="checkbox"
+          checked={task.currentState}
+          onChange={handleToggle}
+        />
+        <span>{task.title}</span>
+        <span className="due-date">Due: {task.dueDate || "No Due Date"}</span>
+      </div>
+      <button onClick={handleDelete}>Delete</button>
+    </div>
+  );
 };
 
 export default TaskRow;

@@ -5,8 +5,9 @@ const initialState = {
   filters: {
     search: "",
     tab: "All",
+    sortBy: "createdAt", // Default sorting criterion (can be changed to 'dueDate')
   },
-  groupBy: "None", // Default grouping criteria
+  groupBy: "None", // Default grouping criterion
 };
 
 const taskSlice = createSlice({
@@ -14,9 +15,12 @@ const taskSlice = createSlice({
   initialState,
   reducers: {
     addTask: (state, action) => {
-      state.tasks.push(action.payload);
+      // Add a new task with dueDate
+      const { id, title, description, dueDate, createdAt = new Date() } = action.payload;
+      state.tasks.push({ id, title, description, dueDate, createdAt, currentState: false });
     },
     updateTask: (state, action) => {
+      // Update task properties, including dueDate
       state.tasks = state.tasks.map((task) =>
         task.id === action.payload.id ? { ...task, ...action.payload } : task
       );

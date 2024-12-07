@@ -3,55 +3,63 @@ import { useSelector } from "react-redux";
 import TaskRow from "./TaskRow";
 
 const TaskList = () => {
-  const tasks = useSelector((state) => state.tasks.tasks);
-  const filters = useSelector((state) => state.tasks.filters);
-  const groupBy = useSelector((state) => state.tasks.groupBy);
+  const { tasks, filters, groupBy } = useSelector((state) => state.tasks);
 
-  // Filter tasks based on search and tab
+  // Apply filters
   const filteredTasks = tasks.filter((task) => {
-    const matchesSearch = task.title
-      .toLowerCase()
-      .includes(filters.search.toLowerCase());
+    const matchesSearch =
+      task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+      task.description?.toLowerCase().includes(filters.search.toLowerCase());
     const matchesTab =
       filters.tab === "All" ||
       (filters.tab === "Completed" && task.currentState) ||
       (filters.tab === "Pending" && !task.currentState);
-
     return matchesSearch && matchesTab;
   });
 
-  // Group tasks based on selected criteria
-  const groupedTasks = groupBy === "None"
-    ? { None: filteredTasks }
-    : filteredTasks.reduce((groups, task) => {
-        const groupKey = groupBy === "Priority" ? task.priority : task.dueDate || "No Due Date";
-        if (!groups[groupKey]) {
-          groups[groupKey] = [];
-        }
-        groups[groupKey].push(task);
-        return groups;
-      }, {});
+  // Sort tasks by the selected criterion (e.g., `createdAt` or `dueDate`)
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (filters.sortBy === "dueDate") {
+      if (!a.dueDate) return 1; // Tasks without dueDate go last
+      if (!b.dueDate) return -1;
+      return new Date(a.dueDate) - new Date(b.dueDate);
+    }
+    // Default sorting by `createdAt`
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  // Group tasks (if grouping is enabled)
+  const groupedTasks = groupBy !== "None" ? groupTasksBy(sortedTasks, groupBy) : null;
+
+  // Helper to group tasks by a specific property
+  function groupTasksBy(tasks, groupBy) {
+    const grouped = {};
+    tasks.forEach((task) => {
+      const key = task[groupBy] || "Uncategorized"; // Use "Uncategorized" if no value for groupBy
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(task);
+    });
+    return grouped;
+  }
 
   return (
-    <div>
-      {Object.keys(groupedTasks).map((group) => (
-        <div key={group} style={styles.group}>
-          {groupBy !== "None" && <h3 style={styles.groupHeader}>{group}</h3>}
-          <ul style={styles.list}>
+    <div className="task-list">
+      {groupBy !== "None" ? (
+        // Render tasks grouped by a specific property
+        Object.keys(groupedTasks).map((group) => (
+          <div key={group} className="task-group">
+            <h3>{group}</h3>
             {groupedTasks[group].map((task) => (
               <TaskRow key={task.id} task={task} />
             ))}
-          </ul>
-        </div>
-      ))}
+          </div>
+        ))
+      ) : (
+        // Render tasks in a flat list if no grouping is applied
+        sortedTasks.map((task) => <TaskRow key={task.id} task={task} />)
+      )}
     </div>
   );
-};
-
-const styles = {
-  group: { marginBottom: "20px" },
-  groupHeader: { margin: "10px 0", fontSize: "18px" },
-  list: { listStyle: "none", padding: "0" },
 };
 
 export default TaskList;
