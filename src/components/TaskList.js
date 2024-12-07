@@ -24,12 +24,22 @@ const TaskList = () => {
     return sortedTasks;
   }, [tasks, filters.sortBy]); // Re-run when tasks or sortBy filter changes
 
-  // Handle sort change
   const handleSortChange = (e) => {
     dispatch(setFilters({ sortBy: e.target.value }));
   };
 
   const sortedTasks = sortTasks(); // Get sorted tasks based on the selected filter
+
+  // Filter tasks based on completion state for the selected tab
+  const filteredTasks = sortedTasks.filter((task) => {
+    if (filters.tab === "Completed") {
+      return task.currentState === true;
+    } else if (filters.tab === "Pending") {
+      return task.currentState === false;
+    } else {
+      return true; // Show all tasks for the "All" tab
+    }
+  });
 
   return (
     <div>
@@ -42,10 +52,10 @@ const TaskList = () => {
       </div>
 
       <h2>Task List</h2>
-      {sortedTasks.length === 0 ? (
+      {filteredTasks.length === 0 ? (
         <p>No tasks available</p>
       ) : (
-        sortedTasks.map((task) => <TaskRow key={task.id} task={task} />)
+        filteredTasks.map((task) => <TaskRow key={task.id} task={task} />)
       )}
     </div>
   );
