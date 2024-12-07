@@ -65,9 +65,6 @@ const styles = {
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
-  addButtonHover: {
-    backgroundColor: "#0056b3",
-  },
 };
 
 export default TodoApp;

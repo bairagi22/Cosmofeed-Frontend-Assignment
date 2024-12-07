@@ -1,39 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Initial state
 const initialState = {
-  tasks: [], // List of tasks
+  tasks: [],
   filters: {
     search: "",
     tab: "All",
-    sortBy: "createdAt", // Default sorting criterion (can be changed to 'dueDate')
   },
-  groupBy: "None", // Default grouping criterion
+  groupBy: "None", // Default grouping criteria
 };
 
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
+    // Add task action
     addTask: (state, action) => {
-      // Add a new task with dueDate
-      const { id, title, description, dueDate, createdAt = new Date() } = action.payload;
-      state.tasks.push({ id, title, description, dueDate, createdAt, currentState: false });
-    },
-    updateTask: (state, action) => {
-      // Update task properties, including dueDate
-      state.tasks = state.tasks.map((task) =>
-        task.id === action.payload.id ? { ...task, ...action.payload } : task
-      );
-    },
-    deleteTask: (state, action) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-    },
-    toggleTaskState: (state, action) => {
-      state.tasks = state.tasks.map((task) =>
-        task.id === action.payload
-          ? { ...task, currentState: !task.currentState }
-          : task
-      );
+      state.tasks.push(action.payload);
     },
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
@@ -41,16 +24,20 @@ const taskSlice = createSlice({
     setGroupBy: (state, action) => {
       state.groupBy = action.payload; // Update the grouping criteria
     },
+    // New reducer for toggling task state (completed/incomplete)
+    toggleTaskState: (state, action) => {
+      const task = state.tasks.find((task) => task.id === action.payload);
+      if (task) {
+        task.currentState = !task.currentState;
+      }
+    },
+    // New reducer for deleting a task
+    deleteTask: (state, action) => {
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+    },
   },
 });
 
-export const {
-  addTask,
-  updateTask,
-  deleteTask,
-  toggleTaskState,
-  setFilters,
-  setGroupBy,
-} = taskSlice.actions;
+export const { addTask, setFilters, setGroupBy, toggleTaskState, deleteTask } = taskSlice.actions;
 
 export default taskSlice.reducer;
