@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TaskRow from "./TaskRow";
 import { setFilters } from "../redux/taskSlice";
@@ -7,38 +7,36 @@ const TaskList = () => {
   const dispatch = useDispatch();
   const { tasks, filters } = useSelector((state) => state.tasks);
 
-  // Sorting function, wrapped with useCallback to ensure it doesn't change on every render
+  // Sorting function
   const sortTasks = useCallback(() => {
     let sortedTasks = [...tasks];
 
-    // Sort by dueDate or priority based on the current filter
     if (filters.sortBy === "dueDate") {
-      // Sorting by dueDate (ascending order)
-      sortedTasks = sortedTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      // Sort by due date (ascending)
+      sortedTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
     } else if (filters.sortBy === "priority") {
-      // Sorting by priority (ascending order - 1 = High, 2 = Medium, 3 = Low)
-      const priorityOrder = { Low: 3, Medium: 2, High: 1 }; // High has the highest priority
-      sortedTasks = sortedTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+      // Sort by priority (High -> Medium -> Low)
+      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+      sortedTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
     }
 
     return sortedTasks;
-  }, [tasks, filters.sortBy]); // Re-run when tasks or sortBy filter changes
+  }, [tasks, filters.sortBy]);
 
+  // Handle sort filter change
   const handleSortChange = (e) => {
     dispatch(setFilters({ sortBy: e.target.value }));
   };
 
-  const sortedTasks = sortTasks(); // Get sorted tasks based on the selected filter
-
-  // Filter tasks based on completion state for the selected tab
+  // Apply sorting and filter tasks for the selected tab
+  const sortedTasks = sortTasks();
   const filteredTasks = sortedTasks.filter((task) => {
     if (filters.tab === "Completed") {
       return task.currentState === true;
     } else if (filters.tab === "Pending") {
       return task.currentState === false;
-    } else {
-      return true; // Show all tasks for the "All" tab
     }
+    return true; // Show all tasks in "All" tab
   });
 
   return (

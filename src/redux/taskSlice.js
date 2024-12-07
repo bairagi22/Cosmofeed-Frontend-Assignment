@@ -5,9 +5,9 @@ const initialState = {
   filters: {
     search: "",
     tab: "All",
-    sortBy: "dueDate", // Default sorting by dueDate
+    sortBy: "dueDate",
   },
-  groupBy: "None", // Default grouping criteria
+  groupBy: "None",
 };
 
 const taskSlice = createSlice({
@@ -16,6 +16,13 @@ const taskSlice = createSlice({
   reducers: {
     addTask: (state, action) => {
       state.tasks.push(action.payload);
+    },
+    editTask: (state, action) => {
+      const { id, updatedTask } = action.payload;
+      const taskIndex = state.tasks.findIndex((task) => task.id === id);
+      if (taskIndex !== -1) {
+        state.tasks[taskIndex] = { ...state.tasks[taskIndex], ...updatedTask };
+      }
     },
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
@@ -35,5 +42,6 @@ const taskSlice = createSlice({
   },
 });
 
-export const { addTask, setFilters, setGroupBy, toggleTaskState, deleteTask } = taskSlice.actions;
+export const { addTask, editTask, setFilters, setGroupBy, toggleTaskState, deleteTask } = taskSlice.actions;
+
 export default taskSlice.reducer;

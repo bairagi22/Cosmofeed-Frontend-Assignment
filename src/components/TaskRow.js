@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { toggleTaskState, deleteTask } from "../redux/taskSlice"; // Updated import
+import { toggleTaskState, deleteTask } from "../redux/taskSlice";
+import EditTaskModal from "./EditTaskModal";
 
 const TaskRow = ({ task }) => {
   const dispatch = useDispatch();
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleToggle = () => {
-    dispatch(toggleTaskState(task.id)); // Dispatch the toggle task state action
+    dispatch(toggleTaskState(task.id));
   };
 
   const handleDelete = () => {
-    dispatch(deleteTask(task.id)); // Dispatch the delete task action
+    dispatch(deleteTask(task.id));
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditing(false);
   };
 
   return (
@@ -27,10 +37,16 @@ const TaskRow = ({ task }) => {
         <span>{task.description}</span>
         <span>{task.dueDate}</span>
         <span>{task.priority}</span>
+        <button onClick={handleEdit} style={styles.editButton}>
+          Edit
+        </button>
         <button onClick={handleDelete} style={styles.deleteButton}>
           Delete
         </button>
       </div>
+      {isEditing && (
+        <EditTaskModal task={task} onClose={handleCloseEditModal} />
+      )}
     </div>
   );
 };
@@ -51,6 +67,14 @@ const styles = {
     display: "flex",
     gap: "10px",
     alignItems: "center",
+  },
+  editButton: {
+    backgroundColor: "#ffc107",
+    color: "white",
+    border: "none",
+    padding: "5px 10px",
+    cursor: "pointer",
+    borderRadius: "4px",
   },
   deleteButton: {
     backgroundColor: "#ff4d4d",
