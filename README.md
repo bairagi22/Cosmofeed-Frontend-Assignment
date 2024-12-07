@@ -1,70 +1,124 @@
-# Getting Started with Create React App
+# Task Management App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a task management app built using React, Redux, and other modern web technologies. The app allows users to manage tasks with functionality for sorting, filtering by priority, searching, and marking tasks as completed or pending. It also includes features for editing and deleting tasks.
 
-## Available Scripts
 
-In the project directory, you can run:
+## Deployed Link
+https://cosmofeed-frontend-assignment.vercel.app/
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Task Creation**: Users can add tasks with a name, description, due date, and priority.
+- **Task Filtering**: Tasks can be filtered by their state (Pending, Completed, All) and sorted by due date or priority.
+- **Task Sorting**: Tasks can be sorted by due date (ascending) or priority (High, Medium, Low).
+- **Global Search**: A search bar allows users to find tasks by name.
+- **Task Details**: Clicking on a task displays detailed information like summary, created on date, due date, and priority.
+- **Mark as Completed**: Tasks can be marked as completed with a "Done" button, and the state can be toggled with a "Re-open" button.
+- **Task Editing and Deleting**: Users can edit or delete tasks.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+To run the project locally:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ayushvaish2511/Cosmofeed-Frontend-Assignment.git
+   ```
 
-### `npm run build`
+2. Navigate to the project folder:
+   ```bash
+   cd cosmofeed-frontend-assignment
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. Run the development server:
+   ```bash
+   npm start
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Open your browser and go to `http://localhost:3000` to view the app.
 
-### `npm run eject`
+## Technologies Used
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **React**: For building the user interface.
+- **Redux**: For state management.
+- **Redux Toolkit**: Simplifies Redux code and enhances state management.
+- **JavaScript (ES6+)**: For modern JavaScript features.
+- **HTML/CSS**: For structuring and styling the app.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## App Structure
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### `src/`
+- **components/**: Contains React components for task rows, task lists, and modals.
+- **redux/**: Contains Redux slice files, including state management logic for tasks and filters.
+- **App.js**: The main component that renders the entire app.
+- **index.js**: The entry point of the app where React and Redux are initialized.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### `redux/taskSlice.js`
+This file defines the Redux slice for task management. It handles actions like adding, editing, deleting, toggling task state, and setting filters.
 
-## Learn More
+### `components/TaskRow.js`
+Displays each task's title, and on click, shows task details like description, due date, and priority. It also allows editing and deleting tasks.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `components/TaskList.js`
+This component handles the task list display and filtering logic. It allows sorting tasks and filters them based on their current state (Pending, Completed, or All).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### `components/GlobalSearch.js`
+Contains a search input field that dynamically filters tasks based on the search query.
 
-### Code Splitting
+## Redux Logic
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The task management state is managed by Redux, using the following key actions:
 
-### Analyzing the Bundle Size
+- **`addTask`**: Adds a new task.
+- **`editTask`**: Edits an existing task.
+- **`toggleTaskState`**: Toggles the state of a task (Completed or Pending).
+- **`deleteTask`**: Deletes a task from the state.
+- **`setFilters`**: Updates the filters, including search and sorting preferences.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Filters and Sorting
 
-### Making a Progressive Web App
+### Filters:
+- **Tab Filters**: Filter tasks by `All`, `Pending`, or `Completed`.
+- **Search Filter**: Filter tasks by name based on the search query.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Sorting:
+- **Sort by Due Date**: Sort tasks by their due date (ascending).
+- **Sort by Priority**: Sort tasks by their priority (High -> Medium -> Low).
 
-### Advanced Configuration
+## State Management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+State is managed using Redux, with the following structure:
+```json
+{
+  "tasks": [
+    {
+      "id": "1",
+      "name": "Task 1",
+      "description": "This is the task description",
+      "dueDate": "2024-12-10",
+      "priority": "High",
+      "currentState": false,  // false means Pending, true means Completed
+      "createdOn": "2024-12-05"
+    }
+  ],
+  "filters": {
+    "search": "",
+    "tab": "All",    // Filters tasks based on tab: "All", "Completed", "Pending"
+    "sortBy": "dueDate"
+  },
+  "groupBy": "None"
+}
+```
 
-### Deployment
+## Usage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Adding a Task**: Click the "Add Task" button and fill out the task name, description, due date, and priority. Once added, it will appear in the task list.
+2. **Editing a Task**: Click the "Edit" button next to a task to modify its details.
+3. **Marking a Task as Completed**: Click the "Done" button to mark the task as completed. The task will move to the "Completed" tab.
+4. **Searching Tasks**: Use the search bar to filter tasks by their name.
+5. **Sorting Tasks**: Choose between sorting tasks by Due Date or Priority from the dropdown menu.
