@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { addTask } from "../redux/taskSlice";
 
 const AddTaskModal = ({ onClose }) => {
-  const dispatch = useDispatch(); // Get the dispatch function from Redux
+  const dispatch = useDispatch();
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
@@ -11,7 +11,10 @@ const AddTaskModal = ({ onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
+    // Get the current date in a readable format
+    const createdOn = new Date().toLocaleDateString();
+
     // Create the new task object
     const newTask = {
       id: Date.now(),
@@ -19,6 +22,7 @@ const AddTaskModal = ({ onClose }) => {
       description: taskDescription,
       dueDate: taskDueDate,
       priority: taskPriority,
+      createdOn, // Automatically set the created date
       currentState: false, // Default state for new tasks
     };
 

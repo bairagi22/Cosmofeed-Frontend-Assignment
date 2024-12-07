@@ -6,8 +6,9 @@ import EditTaskModal from "./EditTaskModal";
 const TaskRow = ({ task }) => {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const handleToggle = () => {
+  const handleToggleState = () => {
     dispatch(toggleTaskState(task.id));
   };
 
@@ -23,27 +24,54 @@ const TaskRow = ({ task }) => {
     setIsEditing(false);
   };
 
+  const toggleDetails = () => {
+    setShowDetails((prev) => !prev);
+  };
+
   return (
     <div style={styles.taskRow}>
-      <div>
-        <input
-          type="checkbox"
-          checked={task.currentState}
-          onChange={handleToggle}
-        />
-        <span style={styles.taskName}>{task.name}</span>
-      </div>
-      <div style={styles.taskDetails}>
-        <span>{task.description}</span>
-        <span>{task.dueDate}</span>
-        <span>{task.priority}</span>
-        <button onClick={handleEdit} style={styles.editButton}>
-          Edit
-        </button>
-        <button onClick={handleDelete} style={styles.deleteButton}>
-          Delete
+      {/* Title Row */}
+      <div style={styles.titleRow} onClick={toggleDetails}>
+        <span style={styles.taskTitle}>{task.name}</span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering details toggle
+            handleToggleState();
+          }}
+          style={
+            task.currentState ? styles.reopenButton : styles.doneButton
+          }
+        >
+          {task.currentState ? "Re-open" : "Done"}
         </button>
       </div>
+
+      {/* Details Section */}
+      {showDetails && (
+        <div style={styles.details}>
+          <p>
+            <strong>Summary:</strong> {task.description}
+          </p>
+          <p>
+            <strong>Created On:</strong> {task.createdOn}
+          </p>
+          <p>
+            <strong>Due Date:</strong> {task.dueDate}
+          </p>
+          <p>
+            <strong>Priority:</strong> {task.priority}
+          </p>
+          <div style={styles.actions}>
+            <button onClick={handleEdit} style={styles.editButton}>
+              Edit
+            </button>
+            <button onClick={handleDelete} style={styles.deleteButton}>
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+
       {isEditing && (
         <EditTaskModal task={task} onClose={handleCloseEditModal} />
       )}
@@ -53,20 +81,44 @@ const TaskRow = ({ task }) => {
 
 const styles = {
   taskRow: {
+    borderBottom: "1px solid #ddd",
+    padding: "10px 0",
+  },
+  titleRow: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: "10px",
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
+    alignItems: "center",
+    cursor: "pointer",
   },
-  taskName: {
+  taskTitle: {
     fontWeight: "bold",
-    marginLeft: "10px",
+    fontSize: "1.2rem",
   },
-  taskDetails: {
+  doneButton: {
+    backgroundColor: "#28a745",
+    color: "white",
+    border: "none",
+    padding: "5px 10px",
+    cursor: "pointer",
+    borderRadius: "4px",
+  },
+  reopenButton: {
+    backgroundColor: "#ffc107",
+    color: "white",
+    border: "none",
+    padding: "5px 10px",
+    cursor: "pointer",
+    borderRadius: "4px",
+  },
+  details: {
+    marginTop: "10px",
+    paddingLeft: "25px",
+    color: "#555",
+  },
+  actions: {
+    marginTop: "10px",
     display: "flex",
     gap: "10px",
-    alignItems: "center",
   },
   editButton: {
     backgroundColor: "#ffc107",
